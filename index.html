@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Capacitância/Indutância</title>
+    <title>Calculadora de Capacitância/Indutância e Impedância</title>
 </head>
 <body>
-    <h1>Calculadora de Capacitância/Indutância</h1>
+    <h1>Calculadora de Capacitância/Indutância e Impedância</h1>
+
     <label for="impedancia">Impedância (ex: -j2, j1, -0.4j):</label>
     <input type="text" id="impedancia" placeholder="-j2">
     <br><br>
@@ -14,11 +15,28 @@
     <label for="frequencia">Frequência (Hz):</label>
     <input type="number" id="frequencia" value="60">
     <br><br>
-    
+
     <button onclick="calcular()">Calcular</button>
-    
+
     <h2>Resultado</h2>
     <p id="resultado"></p>
+    
+    <hr>
+
+    <h1>Cálculo Inverso</h1>
+    
+    <label for="tipo">Tipo:</label>
+    <input type="checkbox" id="tipo" onclick="alternarTipo()"> Capacitância (desmarcado para Indutância)
+    <br><br>
+
+    <label for="valor">Valor (ex: 41.1uF, 41mH):</label>
+    <input type="text" id="valor" placeholder="41.1uF">
+    <br><br>
+    
+    <button onclick="calcularImpedancia()">Calcular Impedância</button>
+
+    <h2>Resultado Inverso</h2>
+    <p id="resultadoInverso"></p>
 
     <script>
         function calcular() {
@@ -42,6 +60,49 @@
             }
 
             document.getElementById('resultado').innerText = resultado;
+        }
+
+        function alternarTipo() {
+            const tipo = document.getElementById('tipo').checked;
+            const valorInput = document.getElementById('valor');
+            if (tipo) {
+                valorInput.placeholder = "41.1uF";
+            } else {
+                valorInput.placeholder = "41uH";
+            }
+        }
+
+        function calcularImpedancia() {
+            const tipo = document.getElementById('tipo').checked;
+            const valor = document.getElementById('valor').value;
+            const frequencia = parseFloat(document.getElementById('frequencia').value);
+            const omega = 2 * Math.PI * frequencia;
+
+            let fator;
+            if (valor.includes('m')) {
+                fator = 1e-3;
+            } else if (valor.includes('u')) {
+                fator = 1e-6;
+            } else if (valor.includes('n')) {
+                fator = 1e-9;
+            } else if (valor.includes('p')) {
+                fator = 1e-12;
+            } else {
+                fator = 1;
+            }
+
+            const valorNumerico = parseFloat(valor) * fator;
+            let resultadoInverso;
+
+            if (tipo) {
+                let Xc = -1 / (omega * valorNumerico);
+                resultadoInverso = `Impedância capacitiva: ${Xc.toFixed(6)}j Ω`;
+            } else {
+                let Xl = omega * valorNumerico;
+                resultadoInverso = `Impedância indutiva: ${Xl.toFixed(6)}j Ω`;
+            }
+
+            document.getElementById('resultadoInverso').innerText = resultadoInverso;
         }
     </script>
 </body>
