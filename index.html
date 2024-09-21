@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Capacitância/Indutância</title>
+</head>
+<body>
+    <h1>Calculadora de Capacitância/Indutância</h1>
+    <label for="impedancia">Impedância (ex: -j2, j1, -0.4j):</label>
+    <input type="text" id="impedancia" placeholder="-j2">
+    <br><br>
+    
+    <label for="frequencia">Frequência (Hz):</label>
+    <input type="number" id="frequencia" value="60">
+    <br><br>
+    
+    <button onclick="calcular()">Calcular</button>
+    
+    <h2>Resultado</h2>
+    <p id="resultado"></p>
+
+    <script>
+        function calcular() {
+            const impedancia = document.getElementById('impedancia').value;
+            const frequencia = parseFloat(document.getElementById('frequencia').value);
+            const omega = 2 * Math.PI * frequencia;
+            let imaginario = 0;
+            
+            if (impedancia.includes('j')) {
+                let valor = impedancia.replace('j', '');
+                imaginario = parseFloat(valor);
+            }
+
+            let resultado;
+            if (imaginario > 0) {
+                let L = imaginario / omega;
+                resultado = `Indutância necessária: ${L.toFixed(6)} H`;
+            } else {
+                let C = -1 / (omega * imaginario);
+                resultado = `Capacitância necessária: ${C.toFixed(6)} F`;
+            }
+
+            document.getElementById('resultado').innerText = resultado;
+        }
+    </script>
+</body>
+</html>
